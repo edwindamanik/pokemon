@@ -1,23 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchPokemon } from './stores/actions/pokemonDitto';
+import Card from './components/Card';
 
 function App() {
+  const dispatch = useDispatch();
+
+  const { loading, pokemonData, pokemonDataDetail, error } = useSelector(state => state.pokemon);
+
+  useEffect(() => {
+    dispatch(fetchPokemon());
+  }, [dispatch])
+
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', gap: '10px', padding: '20px' }}>
+      {pokemonDataDetail.map((pokemonDetail, index) => (
+        <Card 
+          key={index}
+          title={pokemonDetail.name}
+          imageSrc={pokemonDetail.sprites.front_default}
+        />
+      ))}
     </div>
   );
 }
